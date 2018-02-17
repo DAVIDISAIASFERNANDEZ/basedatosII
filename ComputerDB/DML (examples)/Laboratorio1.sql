@@ -194,46 +194,22 @@ select fecha from Salida
 min (fecha) as fechaminima, max (fecha) as fechamaxima
 ------------------------------------------------------------------------------------
 
+--2.REPORTE DE ARTICULOS EJERCICIO 2 DEL LABORATORIO
 
-
-/*
-11.	Scenario: Reporte de proveedores (Francisco Ramirez)
-
-a.	Given: El dueño del negocio requiere conocer a sus proveedores
-b.	When: requiera la información
-c.	Then: un reporte debería mostrar el nombre del proveedor, dirección, teléfono, nit, fecha de primera compra, fecha de última compra, frecuencia de compra promedio 
-d.	And: debe estar ordenado por nombre
-e.	And: debe estar filtrado por uno o varios meses y uno o varios años
-*/
-declare @consulta varchar(max)
-declare @años varchar(40)
-declare @meses varchar(40)
-
-select @años = '2013, 2017'
-select @meses = '2, 3'
-
-set @consulta = 'select pr.idProveedor, pr.nombreProveedor, pr.direccion, pr.telefono, pr.nit,
-			(select min(entrada.fecha) from entrada)primera_compra, 
-				(select max(entrada.fecha) from Entrada )ultima_compra, count(en.idEntrada)promedio, en.fecha
-													            from proveedor pr
-
-				inner join Entrada en on en.idProveedor = pr.idProveedor
-		where	(len('''+ @años + ''') > 0) 
-				and (len(''' + @meses + ''') > 0)
-				and (year(fecha) in (' + @años + ')) 
-				and month(fecha) in (' + @meses + ')
-
- -- where (month(en.fecha)=3) and (year(en.fecha) = 2017)
-
-			group by pr.idProveedor, pr.nombreProveedor, pr.direccion, pr.telefono, pr.nit, en.fecha
-			order by pr.nombreProveedor asc '
-
- exec(@consulta)
-
-
-
-
-
-
+ use ComputerDB
+select 
+	id codigo,
+	nombre,
+	p.precio,
+	costo,
+	existencia,
+	m.nombreMarca, 
+	count(sd.cantidad) as [recuento de ventas] 
+from  
+	productos p, marca m, SalidaDetalle sd
+where p.idMarca in (select idMarca from Marca where p.idMarca=m.idMarca) and
+	sd.idProducto in (select idProducto from SalidaDetalle where p.id=sd.idProducto)
+group by id, nombre,costo, existencia, p.precio, m.nombreMarca
+order by nombre, nombreMarca asc
 
 
