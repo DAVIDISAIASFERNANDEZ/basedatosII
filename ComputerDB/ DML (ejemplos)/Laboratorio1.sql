@@ -1,11 +1,11 @@
 /*
 1.	Scenario: Reporte de clientes
-Given: El dueño del negocio requiere conocer a sus clientes
-When: requiera la información
-Then: un reporte debería mostrar el nombre, dirección, teléfono y nit
+Given: El dueÃ±o del negocio requiere conocer a sus clientes
+When: requiera la informaciÃ³n
+Then: un reporte deberÃ­a mostrar el nombre, direcciÃ³n, telÃ©fono y nit
 And: debe estar ordenado por nombre 
-And: debe estar filtrado por las ventas del primer semestre de cada año.
-And: debe estar filtrado por el día lunes de las ventas.
+And: debe estar filtrado por las ventas del primer semestre de cada aÃ±o.
+And: debe estar filtrado por el dÃ­a lunes de las ventas.
 */
 
 select nombreCliente nombre, direccion,telefono,nit,
@@ -19,11 +19,11 @@ and datename(dw,s.fecha)='Lunes'
 order by nombreCliente
 
 /*
-2.	Scenario: Reporte de artículos
-Given: El dueño del negocio requiere un listado de productos
-When: requiera la información
-Then: debería mostrar el código, nombre, precio, costo, existencia, marca, total en ventas, total en costos y total en utilidad 
-And: debe estar ordenado por marca y nombre de artículo
+2.	Scenario: Reporte de artÃ­culos
+Given: El dueÃ±o del negocio requiere un listado de productos
+When: requiera la informaciÃ³n
+Then: deberÃ­a mostrar el cÃ³digo, nombre, precio, costo, existencia, marca, total en ventas, total en costos y total en utilidad 
+And: debe estar ordenado por marca y nombre de artÃ­culo
 */
 
 select  codigo,nombre,d.precio,d.cantidad, d.costoTotal costo, existencia, m.nombreMarca marca,
@@ -66,11 +66,11 @@ order by fecha desc
 
 /*
 9.  Scenario: Reporte de utilidad bruta (Daniel Estupe)
-Given: el dueño de un negocio requiere información de las ventas
-When: requiera la información
-Then: debería mostrar el año, mes, ingresos, egresos y utilidad bruta 
-And: debe estar ordenado por año y mes
-And: debe ser posible filtrar por ninguno o varios años y por ninguno o varios meses
+Given: el dueÃ±o de un negocio requiere informaciÃ³n de las ventas
+When: requiera la informaciÃ³n
+Then: deberÃ­a mostrar el aÃ±o, mes, ingresos, egresos y utilidad bruta 
+And: debe estar ordenado por aÃ±o y mes
+And: debe ser posible filtrar por ninguno o varios aÃ±os y por ninguno o varios meses
 */
 
 declare @consulta varchar(max)
@@ -80,7 +80,7 @@ declare @meses varchar(50)
 select @anhos = '2016'
 select @meses = '2'
 
-set @consulta = 'select year(fecha) as Año,
+set @consulta = 'select year(fecha) as AÃ±o,
 					   datename(month, fecha) as Mes,
 					   sum(sd.costoTotal) as Ingresos,
 					   sum(sd.cantidad * p.costo) as Egresos,
@@ -93,5 +93,27 @@ set @consulta = 'select year(fecha) as Año,
 				and (year(fecha) in (' + @anhos + ')) 
 				and month(fecha) in (' + @meses + ')
 				group by year(fecha), datename(month, fecha), month(fecha)
-				order by Año desc, month(fecha) asc'
+				order by AÃ±o desc, month(fecha) asc'
 exec(@consulta)
+
+--2.REPORTE DE ARTICULOS EJERCICIO 2 
+--- por la forma de in para subconsulta
+ select * from Productos
+ select * from SalidaDetalle
+ select * from Marca
+ use ComputerDB
+ 
+select 
+	id codigo,
+	nombre,
+	p.precio,
+	costo,
+	existencia,
+	m.nombreMarca, 
+	count(sd.cantidad) as [recuento de ventas] 
+from  
+	productos p, marca m, SalidaDetalle sd
+where p.idMarca in (select idMarca from Marca where p.idMarca=m.idMarca) and
+	sd.idProducto in (select idProducto from SalidaDetalle where p.id=sd.idProducto)
+group by id, nombre,costo, existencia, p.precio, m.nombreMarca
+order by nombre, nombreMarca asc
