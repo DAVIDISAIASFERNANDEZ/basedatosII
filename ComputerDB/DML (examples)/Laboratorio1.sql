@@ -38,6 +38,11 @@ Given: El dueño del negocio requiere conocer a sus clientes
 When: requiera la información
 Then: un reporte debería mostrar el nombre, dirección, teléfono y nit
 And: debe estar ordenado por nombre 
+
+
+
+
+
 And: debe estar filtrado por las ventas del primer semestre de cada año.
 And: debe estar filtrado por el día lunes de las ventas.
 */
@@ -129,3 +134,30 @@ set @consulta = 'select year(fecha) as Año,
 				group by year(fecha), datename(month, fecha), month(fecha)
 				order by Año desc, month(fecha) asc'
 exec(@consulta)
+
+
+ejercicio  2 de laboratorio 
+select * from Productos
+ select * from SalidaDetalle
+ select * from Marca
+
+ use ComputerDB
+select 
+	id codigo,
+	nombre,
+	p.precio,
+	costo,
+	existencia,
+	m.nombreMarca, 
+	count(sd.cantidad) as [recuento de ventas] 
+from  
+	productos p, marca m, SalidaDetalle sd
+where p.idMarca in (select idMarca from Marca where p.idMarca=m.idMarca) and
+	sd.idProducto in (select idProducto from SalidaDetalle where p.id=sd.idProducto)
+group by id, nombre,costo, existencia, p.precio, m.nombreMarca
+order by nombre, nombreMarca asc
+
+
+
+
+
