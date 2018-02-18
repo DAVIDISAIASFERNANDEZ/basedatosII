@@ -1,3 +1,26 @@
+/* EJERCICIO 2 
+2.	Scenario: Reporte de artículos (David Fernandez)
+a.	Given: El dueño del negocio requiere un listado de productos
+b.	When: requiera la información
+c.	Then: debería mostrar el código, nombre, precio, costo, existencia y marca 
+d.	And: debe mostrar el recuento de ventas
+e.	And: debe estar ordenado por marca y nombre de artículo.
+*/ 
+select 
+	id codigo,
+	nombre,
+	p.precio,
+	costo,
+	existencia,
+	m.nombreMarca, 
+	count(sd.cantidad) as [recuento de ventas] 
+from 
+	Productos p
+	inner join Marca m on p.idMarca = m.idMarca
+	left join SalidaDetalle sd on p.id=sd.idProducto where p.idMarca=m.idMarca
+group by id, nombre,p.precio,costo,existencia,m.nombreMarca
+order by nombre , nombreMarca asc
+
 /*
 --ESCENARIO 3
 --3.	Scenario: Reporte de ventas (Allan y David)
